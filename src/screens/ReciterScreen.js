@@ -64,6 +64,7 @@ const ReciterScreen = ({navigation, route}) => {
           <Search search={search} />
           {suras.length ? (
             <FlatList
+              // initialNumToRender={suras.length}
               contentContainerStyle={{paddingHorizontal: 15}}
               keyExtractor={item => `${item.id}`}
               data={suras}

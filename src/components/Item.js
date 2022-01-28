@@ -2,7 +2,7 @@ import {StyleSheet, Text, View, TouchableNativeFeedback} from 'react-native';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Item = ({onPress, title, subTitle}) => {
+function Item({onPress, title, subTitle}) {
   return (
     <View style={styles.reciterOuterBox}>
       <TouchableNativeFeedback
@@ -21,7 +21,7 @@ const Item = ({onPress, title, subTitle}) => {
       </TouchableNativeFeedback>
     </View>
   );
-};
+}
 
 export default Item;
 

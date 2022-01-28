@@ -28,7 +28,7 @@ const InfosScreen = () => {
           <TouchableOpacity
             style={styles.github}
             onPress={async () =>
-              Linking.openURL('https://bit.ly/QuraanPlayer')
+              Linking.openURL('https://bit.ly/QuraanPlayerRepo')
             }>
             <Ionicons name="logo-github" color="#fff" size={30} />
             <Text style={styles.txtG}>GITHUB</Text>
