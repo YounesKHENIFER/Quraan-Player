@@ -6,7 +6,7 @@ import {
   View,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-import React, {useCallback, useLayoutEffect, useState} from 'react';
+import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import TrackPlayer, {
@@ -64,11 +64,12 @@ async function togglePlay(playBackState) {
   }
 }
 export default function PlayerScreen({navigation, route}) {
+  const firstrender = useRef(true);
   const progress = useProgress();
   const playBackState = usePlaybackState();
-  let {reciterName, suraId, suras, rewaya, suraName} = route.params;
+  let {reciterName, suraId, suras, suraName} = route.params;
   const [currentSuraTrack, setCurrentSuraTrack] = useState(null);
-  const [repeatMode, setRepeatMode] = useState('repeat');
+  const [repeatMode, setRepeatMode] = useState('off');
   const [isFavorite, setIsFavorite] = useState(false);
   const [suraTitle, setSuraTitle] = useState(suraName);
 
@@ -99,7 +100,6 @@ export default function PlayerScreen({navigation, route}) {
 
   useLayoutEffect(() => {
     const firstIndex = suras.findIndex(sura => sura.id === suraId);
-
     setupPlayer(suras, firstIndex);
   }, []);
 
@@ -108,6 +108,11 @@ export default function PlayerScreen({navigation, route}) {
       title: currentSuraTrack?.reciterName ?? reciterName,
     });
     if (currentSuraTrack) {
+      if (firstrender.current) {
+        firstrender.current = false;
+      } else {
+        setSuraTitle(currentSuraTrack.title);
+      }
       getFavorites();
     }
   }, [currentSuraTrack]);
@@ -115,15 +120,11 @@ export default function PlayerScreen({navigation, route}) {
   // next && back handler
   const skip = useCallback(async to => {
     let currentTrack = await TrackPlayer.getCurrentTrack();
-
     if (to === 'prev' && currentTrack > 0) {
       await TrackPlayer.skipToPrevious();
     } else if (to === 'next' && currentTrack < suras.length - 1) {
       await TrackPlayer.skipToNext();
     }
-    currentTrack = await TrackPlayer.getCurrentTrack();
-    // changing sura name in ui
-    setSuraTitle(suras[currentTrack].title);
   }, []);
 
   // change icon based on repeat mode
@@ -188,11 +189,14 @@ export default function PlayerScreen({navigation, route}) {
 
   // track player listner to get sura name
   useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
-    if (event.type === Event.PlaybackTrackChanged && event.nextTrack !== null) {
+    if (
+      event.type === Event.PlaybackTrackChanged &&
+      event.nextTrack !== null &&
+      event.nextTrack !== undefined
+    ) {
       const track = await TrackPlayer.getTrack(event.nextTrack);
       const {title, id, url, rewaya, reciterName} = track;
 
-      // setSuraTitle(title);
       setCurrentSuraTrack({
         title,
         id,
@@ -200,6 +204,14 @@ export default function PlayerScreen({navigation, route}) {
         rewaya,
         reciterName,
       });
+    }
+  });
+
+  // queue endded event
+  useTrackPlayerEvents([Event.PlaybackQueueEnded], async () => {
+    if (repeatMode === 'off') {
+      await TrackPlayer.destroy();
+      navigation.pop();
     }
   });
 

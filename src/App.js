@@ -55,7 +55,13 @@ export default function App() {
           component={HomeScreen}
         />
         <Stack.Screen name="Reciter" component={ReciterScreen} />
-        <Stack.Screen name="Player" component={PlayerScreen} />
+        <Stack.Screen
+          name="Player"
+          options={{
+            title: '',
+          }}
+          component={PlayerScreen}
+        />
         <Stack.Screen
           options={{
             title: 'قائمة المفضلة',
