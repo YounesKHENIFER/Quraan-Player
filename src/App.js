@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { StatusBar } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
@@ -32,6 +33,8 @@ export default function App() {
   if (loading) return <SplashScreen />;
   if (!connected) return <OfflineScreen setRefresh={setRefresh} />;
   return (
+    <>
+    <StatusBar backgroundColor='#fff' barStyle='dark-content'/>
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
@@ -78,5 +81,6 @@ export default function App() {
         />
       </Stack.Navigator>
     </NavigationContainer>
+    </>
   );
 }
