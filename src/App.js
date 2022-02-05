@@ -38,7 +38,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          animation: 'fade',
+          animation: 'slide_from_right',
           headerTitleAlign: 'center',
           headerShadowVisible: false,
           headerStyle: {
