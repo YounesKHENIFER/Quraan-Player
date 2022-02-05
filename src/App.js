@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { StatusBar } from 'react-native';
+import {StatusBar, I18nManager} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
@@ -21,6 +21,13 @@ export default function App() {
   // Subscribe
 
   useEffect(() => {
+    try {
+      I18nManager.allowRTL(true);
+      I18nManager.forceRTL(true);
+    } catch (e) {
+      console.log(e);
+    }
+
     const unsub = NetInfo.addEventListener(state => {
       setConnected(state.isConnected && state.isInternetReachable);
       setLoading(false);
@@ -30,57 +37,61 @@ export default function App() {
     };
   }, [refresh]);
 
-  if (loading) return <SplashScreen />;
-  if (!connected) return <OfflineScreen setRefresh={setRefresh} />;
+  if (loading) {
+    return <SplashScreen />;
+  }
+  if (!connected) {
+    return <OfflineScreen setRefresh={setRefresh} />;
+  }
   return (
     <>
-    <StatusBar backgroundColor='#fff' barStyle='dark-content'/>
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          animation: 'slide_from_right',
-          headerTitleAlign: 'center',
-          headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: '#fff',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 23,
-          },
-        }}
-        initialRouteName="Home">
-        <Stack.Screen
-          options={{
-            title: 'قارئ القرآن',
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            animation: 'slide_from_left',
+            headerTitleAlign: 'center',
+            headerShadowVisible: false,
+            headerStyle: {
+              backgroundColor: '#fff',
+            },
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 23,
+            },
           }}
-          name="Home"
-          component={HomeScreen}
-        />
-        <Stack.Screen name="Reciter" component={ReciterScreen} />
-        <Stack.Screen
-          name="Player"
-          options={{
-            title: '',
-          }}
-          component={PlayerScreen}
-        />
-        <Stack.Screen
-          options={{
-            title: 'قائمة المفضلة',
-          }}
-          name="Favorite"
-          component={FavoriteScreen}
-        />
-        <Stack.Screen
-          options={{
-            title: 'معلومات عن التطبيق',
-          }}
-          name="Infos"
-          component={InfosScreen}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+          initialRouteName="Home">
+          <Stack.Screen
+            options={{
+              title: 'قارئ القرآن',
+            }}
+            name="Home"
+            component={HomeScreen}
+          />
+          <Stack.Screen name="Reciter" component={ReciterScreen} />
+          <Stack.Screen
+            name="Player"
+            options={{
+              title: '',
+            }}
+            component={PlayerScreen}
+          />
+          <Stack.Screen
+            options={{
+              title: 'قائمة المفضلة',
+            }}
+            name="Favorite"
+            component={FavoriteScreen}
+          />
+          <Stack.Screen
+            options={{
+              title: 'معلومات عن التطبيق',
+            }}
+            name="Infos"
+            component={InfosScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </>
   );
 }

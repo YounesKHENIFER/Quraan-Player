@@ -28,6 +28,8 @@
 		A0722FAEB1554FC5B664D926 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 36F0FBAD1B9A413DB5492014 /* Octicons.ttf */; };
 		60E4F801EC964F0DA7157755 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF3CDB3968AF4FC69F8C24D0 /* SimpleLineIcons.ttf */; };
 		CAB15685159F4F589EF89999 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3542E5E74F2549389B4F3D7E /* Zocial.ttf */; };
+		F10EFAD46FFD4DF9AE693DF2 /* Tajawal-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5AB1206C9B284E80BF7A22D6 /* Tajawal-Bold.ttf */; };
+		D805EE1B39BD402698DB20BE /* Tajawal-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A4ED31ADD64542A5A765EE98 /* Tajawal-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +70,8 @@
 		36F0FBAD1B9A413DB5492014 /* Octicons.ttf */ = {isa = PBXFileReference; name = "Octicons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		AF3CDB3968AF4FC69F8C24D0 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		3542E5E74F2549389B4F3D7E /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5AB1206C9B284E80BF7A22D6 /* Tajawal-Bold.ttf */ = {isa = PBXFileReference; name = "Tajawal-Bold.ttf"; path = "../src/assets/fonts/Tajawal-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A4ED31ADD64542A5A765EE98 /* Tajawal-Regular.ttf */ = {isa = PBXFileReference; name = "Tajawal-Regular.ttf"; path = "../src/assets/fonts/Tajawal-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +180,8 @@
 				36F0FBAD1B9A413DB5492014 /* Octicons.ttf */,
 				AF3CDB3968AF4FC69F8C24D0 /* SimpleLineIcons.ttf */,
 				3542E5E74F2549389B4F3D7E /* Zocial.ttf */,
+				5AB1206C9B284E80BF7A22D6 /* Tajawal-Bold.ttf */,
+				A4ED31ADD64542A5A765EE98 /* Tajawal-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -287,6 +293,8 @@
 				A0722FAEB1554FC5B664D926 /* Octicons.ttf in Resources */,
 				60E4F801EC964F0DA7157755 /* SimpleLineIcons.ttf in Resources */,
 				CAB15685159F4F589EF89999 /* Zocial.ttf in Resources */,
+				F10EFAD46FFD4DF9AE693DF2 /* Tajawal-Bold.ttf in Resources */,
+				D805EE1B39BD402698DB20BE /* Tajawal-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

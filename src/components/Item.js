@@ -9,14 +9,14 @@ function Item({onPress, title, subTitle}) {
         onPress={onPress}
         background={TouchableNativeFeedback.Ripple('#96D2CB')}
         style={styles.reciterOuterBox}>
+        {/* navigate to reciter screen */}
         <View style={styles.reciterInnerBox}>
-          {/* navigate to reciter screen */}
-          <Ionicons name="chevron-back-circle" size={25} color="#00796B" />
           {/* reciter name */}
-          <View style={{alignItems: 'flex-end'}}>
+          <View style={{alignItems: 'flex-start'}}>
             <Text style={styles.reciterText}>{title}</Text>
             <Text>{subTitle}</Text>
           </View>
+          <Ionicons name="chevron-back-circle-outline" size={25} color="#00796B" />
         </View>
       </TouchableNativeFeedback>
     </View>
@@ -30,15 +30,15 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    borderRadius: 15,
+    borderRadius: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   reciterOuterBox: {
-    marginBottom: 15,
-    backgroundColor: '#ddd',
-    borderRadius: 15,
+    marginBottom: 8,
+    backgroundColor: '#f0f1f7',
+    borderRadius: 8,
     overflow: 'hidden',
   },
   reciterText: {
