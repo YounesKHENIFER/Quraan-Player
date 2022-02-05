@@ -44,7 +44,7 @@ export default InfosScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
   },

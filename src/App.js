@@ -39,7 +39,7 @@ export default function App() {
           headerTitleAlign: 'center',
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: '#eee',
+            backgroundColor: '#fff',
           },
           headerTitleStyle: {
             fontWeight: 'bold',

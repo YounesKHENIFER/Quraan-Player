@@ -77,7 +77,7 @@ export default FavoritesScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
+    backgroundColor: '#fff',
   },
   center: {flex: 1, justifyContent: 'center', alignItems: 'center'},
   noItemsText: {fontSize: 18, color: '#000'},
