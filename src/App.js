@@ -11,8 +11,17 @@ import OfflineScreen from './components/OfflineScreen';
 import SplashScreen from './components/SplashScreen';
 
 import NetInfo from '@react-native-community/netinfo';
+import fonts from './style/fonts';
+import colors from './style/colors';
 
 const Stack = createNativeStackNavigator();
+
+try {
+  I18nManager.allowRTL(true);
+  I18nManager.forceRTL(true);
+} catch (e) {
+  console.log(e);
+}
 
 export default function App() {
   const [connected, setConnected] = useState(false);
@@ -21,13 +30,6 @@ export default function App() {
   // Subscribe
 
   useEffect(() => {
-    try {
-      I18nManager.allowRTL(true);
-      I18nManager.forceRTL(true);
-    } catch (e) {
-      console.log(e);
-    }
-
     const unsub = NetInfo.addEventListener(state => {
       setConnected(state.isConnected && state.isInternetReachable);
       setLoading(false);
@@ -45,7 +47,7 @@ export default function App() {
   }
   return (
     <>
-      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      <StatusBar backgroundColor={colors.primary} barStyle="light-content" />
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
@@ -53,11 +55,12 @@ export default function App() {
             headerTitleAlign: 'center',
             headerShadowVisible: false,
             headerStyle: {
-              backgroundColor: '#fff',
+              backgroundColor: colors.primary,
             },
             headerTitleStyle: {
-              fontWeight: 'bold',
-              fontSize: 23,
+              fontSize: 18,
+              fontFamily: fonts.bold,
+              color: '#fff',
             },
           }}
           initialRouteName="Home">

@@ -3,11 +3,15 @@ import {
   FlatList,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useCallback, useLayoutEffect, useState} from 'react';
 import Search from '../components/Search';
 import Item from '../components/Item';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import colors from '../style/colors';
+import fonts from '../style/fonts';
 
 const ReciterScreen = ({navigation, route}) => {
   const [suras, setSuras] = useState([]);
@@ -53,21 +57,35 @@ const ReciterScreen = ({navigation, route}) => {
   );
 
   useLayoutEffect(() => {
-    navigation.setOptions({title: route.params.reciterName});
+    navigation.setOptions({
+      title: route.params.reciterName,
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <MaterialCommunityIcons
+            name="arrow-right"
+            size={24}
+            color={colors.gary}
+          />
+        </TouchableOpacity>
+      ),
+      headerLeft: () => <View />,
+    });
     getSuras();
   }, []);
 
   return (
     <View style={styles.container}>
-      {!loading ? (
-        <View style={{flex: 1}}>
-          <Search search={search} />
-          {suras.length ? (
+      <View style={{flex: 1}}>
+        <Search search={search} />
+        {!loading ? (
+          suras.length ? (
             <FlatList
               // initialNumToRender={suras.length}
               contentContainerStyle={{paddingHorizontal: 15}}
               keyExtractor={item => `${item.id}`}
               data={suras}
+              showsVerticalScrollIndicator={false}
+              ListHeaderComponent={() => <View style={{height: 32}} />}
               renderItem={({item}) => (
                 <Item
                   title={item.title}
@@ -91,13 +109,13 @@ const ReciterScreen = ({navigation, route}) => {
                 السورة ' {searchTerm} ' غير متوفرة
               </Text>
             </View>
-          ) : null}
-        </View>
-      ) : (
-        <View style={styles.center}>
-          <ActivityIndicator size="large" color="#00796B" />
-        </View>
-      )}
+          ) : null
+        ) : (
+          <View style={styles.center}>
+            <ActivityIndicator size="large" color={colors.gary} />
+          </View>
+        )}
+      </View>
     </View>
   );
 };
@@ -107,8 +125,8 @@ export default ReciterScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.secondary,
   },
   center: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-  noItemsText: {fontSize: 18, color: '#000'},
+  noItemsText: {fontSize: 18, color: colors.gary, fontFamily: fonts.regular},
 });

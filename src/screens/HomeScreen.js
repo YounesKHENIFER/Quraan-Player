@@ -4,11 +4,14 @@ import {
   ActivityIndicator,
   View,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useCallback, useLayoutEffect, useState} from 'react';
 import Search from '../components/Search';
 import Item from '../components/Item';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import colors from '../style/colors';
+import fonts from '../style/fonts';
 
 const HomeScreen = ({navigation}) => {
   const [initreciters, setinitReciters] = useState([]);
@@ -47,34 +50,38 @@ const HomeScreen = ({navigation}) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <MaterialCommunityIcons
-          name="heart"
-          size={30}
-          color="#ed1432"
-          onPress={() => navigation.push('Favorite')}
-        />
+        <TouchableOpacity onPress={() => navigation.push('Favorite')}>
+          <MaterialCommunityIcons
+            name="heart-outline"
+            size={24}
+            color={colors.secondary}
+          />
+        </TouchableOpacity>
       ),
       headerLeft: () => (
-        <MaterialCommunityIcons
-          name="information-outline"
-          size={30}
-          color="black"
-          onPress={() => navigation.push('Infos')}
-        />
+        <TouchableOpacity onPress={() => navigation.push('Infos')}>
+          <MaterialCommunityIcons
+            name="information-outline"
+            size={24}
+            color={colors.secondary}
+          />
+        </TouchableOpacity>
       ),
     });
     if (!reciters.length) getReciters();
-  }, []);
+  }, [navigation]);
   return (
     <View style={styles.container}>
-      {!loading ? (
-        <View style={{flex: 1}}>
-          <Search search={search} />
-          {reciters.length ? (
+      <View style={{flex: 1}}>
+        <Search search={search} />
+        {!loading ? (
+          reciters.length ? (
             <FlatList
               contentContainerStyle={{paddingHorizontal: 15}}
               keyExtractor={item => `${item.id} - ${item.name}`}
+              showsVerticalScrollIndicator={false}
               data={reciters}
+              ListHeaderComponent={() => <View style={{height: 32}} />}
               renderItem={({item}) => (
                 <Item
                   title={item.name}
@@ -94,13 +101,13 @@ const HomeScreen = ({navigation}) => {
                 لا يوجد قارئ بإسم : ' {searchTerm} '
               </Text>
             </View>
-          ) : null}
-        </View>
-      ) : (
-        <View style={styles.center}>
-          <ActivityIndicator size="large" color="#00796B" />
-        </View>
-      )}
+          ) : null
+        ) : (
+          <View style={styles.center}>
+            <ActivityIndicator size="large" color={colors.gary} />
+          </View>
+        )}
+      </View>
     </View>
   );
 };
@@ -110,8 +117,8 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.secondary,
   },
   center: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-  noItemsText: {fontSize: 18, color: '#000'},
+  noItemsText: {fontSize: 18, color: colors.gary, fontFamily: fonts.regular},
 });
