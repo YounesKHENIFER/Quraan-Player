@@ -1,12 +1,33 @@
 import {StyleSheet, Text, View, Linking, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useLayoutEffect} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-const InfosScreen = () => {
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import colors from '../style/colors';
+import fonts from '../style/fonts';
+
+const InfosScreen = ({navigation, route}) => {
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <MaterialCommunityIcons
+            name="arrow-right"
+            size={24}
+            color={colors.secondary}
+          />
+        </TouchableOpacity>
+      ),
+      headerLeft: () => <View />,
+    });
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
+      <View style={styles.header} />
       <View style={styles.main}>
         <View>
           <Text style={styles.txt}>مميزات التطبيق :</Text>
+          <View style={{height:10}}/>
           <Text style={styles.pos}>
             * تطبيق يقدم أكثر من 220 قارئ للقرآن الكريم
           </Text>
@@ -22,16 +43,15 @@ const InfosScreen = () => {
           <Text style={styles.pos}>* البحث في قائمة القرآء و السور</Text>
         </View>
 
-        <View style={{alignItems: 'center'}}>
-          <Text style={styles.txt}>كل الشكر لصاحب السرفرات ♥</Text>
-          <Text style={styles.txt}>للمساهمة في تطوير التطبيق يرجى زيارة</Text>
+        <View>
+          <Text style={styles.txt2}>كل الشكر لصاحب السرفرات ♥</Text>
+          <Text style={styles.txt2}>للمساهمة في تطوير التطبيق يرجى زيارة</Text>
           <TouchableOpacity
             style={styles.github}
             onPress={async () =>
               Linking.openURL('https://bit.ly/QuraanPlayerRepo')
             }>
-            <Ionicons name="logo-github" color="#fff" size={30} />
-            <Text style={styles.txtG}>GITHUB</Text>
+            <Ionicons name="logo-github" color="#fff" size={24} />
           </TouchableOpacity>
         </View>
       </View>
@@ -44,7 +64,7 @@ export default InfosScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
+    backgroundColor: colors.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -56,32 +76,52 @@ const styles = StyleSheet.create({
   },
   txtG: {
     fontSize: 18,
-    color: '#eee',
+    color: '#fff',
     textAlign: 'center',
   },
   txt: {
-    fontSize: 18,
-    color: '#333',
-    fontWeight: 'bold',
+    fontSize: 16,
+    color: colors.text,
+    width: '100%',
+    textAlign: 'right',
+    marginTop: 20,
+    fontFamily: fonts.bold,
+  },
+  txt2: {
+    fontSize: 14,
+    color: colors.text,
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: 12,
+    fontFamily: fonts.bold,
   },
   pos: {
-    fontSize: 15,
-    color: '#666',
+    fontSize: 14,
+    color: colors.secondaryText,
     textAlign: 'right',
+    width: '100%',
     marginTop: 10,
+    fontFamily: fonts.regular,
   },
   github: {
-    marginTop: 10,
+    marginTop: 20,
     flexDirection: 'row',
-    height: 60,
-    width: 150,
-    paddingHorizontal: 20,
+    height: 40,
+    width: 40,
+    // paddingHorizontal: 20,
     borderRadius: 120,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#333',
+    backgroundColor: colors.text,
+    alignSelf: 'center',
     fontWeight: 'bold',
+  },
+  header: {
+    height: 20,
+    borderBottomStartRadius: 12,
+    borderBottomEndRadius: 12,
+    width: '100%',
+    backgroundColor: colors.primary,
+    position: 'absolute',
+    top: -12,
   },
 });

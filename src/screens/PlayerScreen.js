@@ -20,6 +20,8 @@ import TrackPlayer, {
 } from 'react-native-track-player';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import fonts from '../style/fonts';
+import colors from '../style/colors';
 
 async function setupPlayer(suras, firstItem) {
   try {
@@ -106,6 +108,16 @@ export default function PlayerScreen({navigation, route}) {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: currentSuraTrack?.reciterName ?? reciterName,
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <MaterialCommunityIcons
+            name="arrow-right"
+            size={24}
+            color={colors.gary}
+          />
+        </TouchableOpacity>
+      ),
+      headerLeft: () => <View />,
     });
     if (currentSuraTrack) {
       if (firstrender.current) {
@@ -230,6 +242,7 @@ export default function PlayerScreen({navigation, route}) {
   });
   return (
     <View style={styles.container}>
+      <View style={styles.header} />
       {/* top section */}
       <View style={styles.topSection}>
         <Text style={styles.suraName}>سورة {suraTitle}</Text>
@@ -244,20 +257,20 @@ export default function PlayerScreen({navigation, route}) {
             minimumValue={0}
             maximumValue={progress.duration}
             minimumTrackTintColor="#36978B"
-            thumbTintColor="#00796B"
+            thumbTintColor={colors.primary}
             maximumTrackTintColor="#000000"
             onSlidingComplete={async value => await TrackPlayer.seekTo(value)}
           />
           <View style={styles.progressTime}>
-            {/* current position */}
-            <Text>
-              {new Date(progress.position * 1000)
+            {/* time left to end the track */}
+            <Text style={{fontFamily: fonts.regular}}>
+              {new Date((progress.duration - progress.position) * 1000)
                 .toISOString()
                 .substring(11, 19)}
             </Text>
-            {/* time left to end the track */}
-            <Text>
-              {new Date((progress.duration - progress.position) * 1000)
+            {/* current position */}
+            <Text style={{fontFamily: fonts.regular}}>
+              {new Date(progress.position * 1000)
                 .toISOString()
                 .substring(11, 19)}
             </Text>
@@ -269,8 +282,8 @@ export default function PlayerScreen({navigation, route}) {
           <TouchableOpacity onPress={changeRepeatMode}>
             <MaterialCommunityIcons
               name={getRepeatIcon()}
-              size={30}
-              color={repeatMode === 'off' ? '#555' : '#00796B'}
+              size={24}
+              color={repeatMode === 'off' ? colors.gary : colors.primary}
             />
           </TouchableOpacity>
           {/* previous btn */}
@@ -278,9 +291,9 @@ export default function PlayerScreen({navigation, route}) {
             <TouchableNativeFeedback
               style={styles.controllerBtn}
               onPress={() => skip('prev')}
-              background={TouchableNativeFeedback.Ripple('#96D2CB')}>
+              background={TouchableNativeFeedback.Ripple(colors.secondary)}>
               <View style={styles.controllerBtn}>
-                <Ionicons name="play-skip-back" size={30} color="#00796B" />
+                <Ionicons name="play-skip-back-outline" size={26} color={colors.primary}/>
               </View>
             </TouchableNativeFeedback>
           </View>
@@ -289,12 +302,12 @@ export default function PlayerScreen({navigation, route}) {
             <TouchableNativeFeedback
               style={styles.controllerBtn}
               onPress={() => togglePlay(playBackState)}
-              background={TouchableNativeFeedback.Ripple('#96D2CB')}>
+              background={TouchableNativeFeedback.Ripple(colors.text)}>
               <View
                 style={[
                   styles.controllerBtn,
                   {
-                    backgroundColor: '#00796B',
+                    backgroundColor: colors.primary,
                   },
                 ]}>
                 <Ionicons
@@ -314,9 +327,9 @@ export default function PlayerScreen({navigation, route}) {
             <TouchableNativeFeedback
               style={styles.controllerBtn}
               onPress={() => skip('next')}
-              background={TouchableNativeFeedback.Ripple('#96D2CB')}>
+              background={TouchableNativeFeedback.Ripple(colors.secondary)}>
               <View style={styles.controllerBtn}>
-                <Ionicons name="play-skip-forward" size={30} color="#00796B" />
+                <Ionicons name="play-skip-forward-outline" size={26} color={colors.primary} />
               </View>
             </TouchableNativeFeedback>
           </View>
@@ -324,8 +337,8 @@ export default function PlayerScreen({navigation, route}) {
           <TouchableOpacity onPress={toggleFavorite}>
             <Ionicons
               name={isFavorite ? 'heart' : 'heart-outline'}
-              size={30}
-              color="#00796B"
+              size={24}
+              color={isFavorite ? colors.primary : colors.gary}
             />
           </TouchableOpacity>
         </View>
@@ -337,18 +350,18 @@ export default function PlayerScreen({navigation, route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
+    backgroundColor: colors.secondary,
   },
   topSection: {
-    flex: 3,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   suraName: {
-    fontSize: 50,
+    fontSize: 28,
     fontWeight: 'normal',
-    fontFamily: 'Decotype-Thuluth-II',
-    color: '#000',
+    fontFamily: fonts.regular,
+    color: colors.primary,
     // marginBottom: 50,
   },
   logo: {
@@ -357,10 +370,14 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   bottomSection: {
-    flex: 1,
+    height: 180,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
   },
   controlls: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-around',
     alignItems: 'center',
     paddingVertical: 20,
@@ -388,5 +405,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  header: {
+    height: 20,
+    borderBottomStartRadius: 12,
+    borderBottomEndRadius: 12,
+    width: '100%',
+    backgroundColor: colors.primary,
+    position: 'absolute',
+    top: -12,
   },
 });

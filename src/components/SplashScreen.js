@@ -1,6 +1,7 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-const LOGO = require('../assets/logo.png');
+import colors from '../style/colors';
+const LOGO = require('../assets/logow.png');
 const SplashScreen = () => {
   return (
     <View style={styles.container}>
@@ -14,7 +15,7 @@ export default SplashScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
