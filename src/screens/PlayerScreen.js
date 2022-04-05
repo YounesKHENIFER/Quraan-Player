@@ -7,8 +7,6 @@ import {
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import TrackPlayer, {
   Capability,
   Event,
@@ -18,11 +16,15 @@ import TrackPlayer, {
   useProgress,
   useTrackPlayerEvents,
 } from 'react-native-track-player';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import fonts from '../style/fonts';
-import colors from '../style/colors';
+import {useTheme} from '@react-navigation/native';
 
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import fonts from '../style/fonts';
+
+// player setup
 async function setupPlayer(suras, firstItem) {
   try {
     await TrackPlayer.setupPlayer();
@@ -51,10 +53,13 @@ async function setupPlayer(suras, firstItem) {
     });
     await TrackPlayer.add(suras);
     await TrackPlayer.skip(firstItem);
+    await TrackPlayer.play();
   } catch (error) {
     console.log(error);
   }
 }
+
+// toggle playing audio function
 async function togglePlay(playBackState) {
   const currentTrack = await TrackPlayer.getCurrentTrack();
   if (currentTrack != null) {
@@ -65,16 +70,21 @@ async function togglePlay(playBackState) {
     }
   }
 }
+
 export default function PlayerScreen({navigation, route}) {
+  const {colors} = useTheme();
+
   const firstrender = useRef(true);
   const progress = useProgress();
   const playBackState = usePlaybackState();
+
   let {reciterName, suraId, suras, suraName} = route.params;
   const [currentSuraTrack, setCurrentSuraTrack] = useState(null);
   const [repeatMode, setRepeatMode] = useState('off');
   const [isFavorite, setIsFavorite] = useState(false);
   const [suraTitle, setSuraTitle] = useState(suraName);
 
+  // getting user's favorites suras
   const getFavorites = useCallback(async () => {
     try {
       let savedValue = await AsyncStorage.getItem('favorites');
@@ -100,24 +110,16 @@ export default function PlayerScreen({navigation, route}) {
     }
   }, [currentSuraTrack]);
 
+  // initial player setup
   useLayoutEffect(() => {
     const firstIndex = suras.findIndex(sura => sura.id === suraId);
     setupPlayer(suras, firstIndex);
   }, []);
 
+  // UI changes
   useLayoutEffect(() => {
     navigation.setOptions({
       title: currentSuraTrack?.reciterName ?? reciterName,
-      headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialCommunityIcons
-            name="arrow-right"
-            size={24}
-            color={colors.gary}
-          />
-        </TouchableOpacity>
-      ),
-      headerLeft: () => <View />,
     });
     if (currentSuraTrack) {
       if (firstrender.current) {
@@ -241,14 +243,14 @@ export default function PlayerScreen({navigation, route}) {
     }
   });
   return (
-    <View style={styles.container}>
-      <View style={styles.header} />
+    <View style={styles.container(colors.background)}>
+      <View style={styles.header(colors.primary)} />
       {/* top section */}
       <View style={styles.topSection}>
-        <Text style={styles.suraName}>سورة {suraTitle}</Text>
+        <Text style={styles.suraName(colors.text)}>سورة {suraTitle}</Text>
       </View>
       {/* bottm section */}
-      <View style={styles.bottomSection}>
+      <View style={styles.bottomSection(colors.background)}>
         {/* progress bar section */}
         <View style={styles.progressContainer}>
           <Slider
@@ -258,18 +260,18 @@ export default function PlayerScreen({navigation, route}) {
             maximumValue={progress.duration}
             minimumTrackTintColor="#36978B"
             thumbTintColor={colors.primary}
-            maximumTrackTintColor="#000000"
+            maximumTrackTintColor={colors.track}
             onSlidingComplete={async value => await TrackPlayer.seekTo(value)}
           />
           <View style={styles.progressTime}>
             {/* time left to end the track */}
-            <Text style={{fontFamily: fonts.regular}}>
+            <Text style={{fontFamily: fonts.regular, color: colors.gray}}>
               {new Date((progress.duration - progress.position) * 1000)
                 .toISOString()
                 .substring(11, 19)}
             </Text>
             {/* current position */}
-            <Text style={{fontFamily: fonts.regular}}>
+            <Text style={{fontFamily: fonts.regular, color: colors.gray}}>
               {new Date(progress.position * 1000)
                 .toISOString()
                 .substring(11, 19)}
@@ -283,7 +285,7 @@ export default function PlayerScreen({navigation, route}) {
             <MaterialCommunityIcons
               name={getRepeatIcon()}
               size={24}
-              color={repeatMode === 'off' ? colors.gary : colors.primary}
+              color={repeatMode === 'off' ? colors.gray : colors.primaryText}
             />
           </TouchableOpacity>
           {/* previous btn */}
@@ -291,9 +293,13 @@ export default function PlayerScreen({navigation, route}) {
             <TouchableNativeFeedback
               style={styles.controllerBtn}
               onPress={() => skip('prev')}
-              background={TouchableNativeFeedback.Ripple(colors.secondary)}>
+              background={TouchableNativeFeedback.Ripple(colors.background)}>
               <View style={styles.controllerBtn}>
-                <Ionicons name="play-skip-back-outline" size={26} color={colors.primary}/>
+                <Ionicons
+                  name="play-skip-back-outline"
+                  size={26}
+                  color={colors.primaryText}
+                />
               </View>
             </TouchableNativeFeedback>
           </View>
@@ -307,7 +313,7 @@ export default function PlayerScreen({navigation, route}) {
                 style={[
                   styles.controllerBtn,
                   {
-                    backgroundColor: colors.primary,
+                    backgroundColor: colors.primaryText,
                   },
                 ]}>
                 <Ionicons
@@ -317,7 +323,7 @@ export default function PlayerScreen({navigation, route}) {
                       : 'play-outline'
                   }
                   size={30}
-                  color="#fff"
+                  color={colors.background}
                 />
               </View>
             </TouchableNativeFeedback>
@@ -327,9 +333,13 @@ export default function PlayerScreen({navigation, route}) {
             <TouchableNativeFeedback
               style={styles.controllerBtn}
               onPress={() => skip('next')}
-              background={TouchableNativeFeedback.Ripple(colors.secondary)}>
+              background={TouchableNativeFeedback.Ripple(colors.background)}>
               <View style={styles.controllerBtn}>
-                <Ionicons name="play-skip-forward-outline" size={26} color={colors.primary} />
+                <Ionicons
+                  name="play-skip-forward-outline"
+                  size={26}
+                  color={colors.primaryText}
+                />
               </View>
             </TouchableNativeFeedback>
           </View>
@@ -338,7 +348,7 @@ export default function PlayerScreen({navigation, route}) {
             <Ionicons
               name={isFavorite ? 'heart' : 'heart-outline'}
               size={24}
-              color={isFavorite ? colors.primary : colors.gary}
+              color={isFavorite ? colors.primaryText : colors.gray}
             />
           </TouchableOpacity>
         </View>
@@ -348,34 +358,33 @@ export default function PlayerScreen({navigation, route}) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  container: backgroundColor => ({
     flex: 1,
-    backgroundColor: colors.secondary,
-  },
+    backgroundColor,
+  }),
   topSection: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  suraName: {
+  suraName: color => ({
     fontSize: 28,
     fontWeight: 'normal',
     fontFamily: fonts.regular,
-    color: colors.primary,
-    // marginBottom: 50,
-  },
+    color,
+  }),
   logo: {
     height: 240,
     width: 240,
     resizeMode: 'cover',
   },
-  bottomSection: {
+  bottomSection: backgroundColor => ({
     height: 180,
-    backgroundColor: '#fff',
+    backgroundColor,
     justifyContent: 'center',
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
-  },
+  }),
   controlls: {
     flexDirection: 'row-reverse',
     justifyContent: 'space-around',
@@ -406,13 +415,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
-  header: {
+  header: backgroundColor => ({
     height: 20,
     borderBottomStartRadius: 12,
     borderBottomEndRadius: 12,
     width: '100%',
-    backgroundColor: colors.primary,
+    backgroundColor,
     position: 'absolute',
     top: -12,
-  },
+  }),
 });

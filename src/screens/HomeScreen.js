@@ -7,18 +7,21 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useCallback, useLayoutEffect, useState} from 'react';
+import {useTheme} from '@react-navigation/native';
+
 import Search from '../components/Search';
 import Item from '../components/Item';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import colors from '../style/colors';
 import fonts from '../style/fonts';
 
 const HomeScreen = ({navigation}) => {
+  const {colors} = useTheme();
   const [initreciters, setinitReciters] = useState([]);
   const [reciters, setReciters] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // getting reciters data
   const getReciters = useCallback(async () => {
     setLoading(true);
     try {
@@ -33,6 +36,7 @@ const HomeScreen = ({navigation}) => {
     }
   }, []);
 
+  // search functinality
   const search = useCallback(
     term => {
       if (!term.trim()) {
@@ -47,33 +51,42 @@ const HomeScreen = ({navigation}) => {
     [initreciters, loading],
   );
 
+  // initial fetch of reciters
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.push('Favorite')}>
-          <MaterialCommunityIcons
-            name="heart-outline"
-            size={24}
-            color={colors.secondary}
-          />
+      headerLeft: () => (
+        <TouchableOpacity
+          style={{
+            marginHorizontal: 20,
+          }}
+          onPress={() => navigation.push('Favorite')}>
+          <MaterialCommunityIcons name="heart-outline" size={24} color="#fff" />
         </TouchableOpacity>
       ),
-      headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.push('Infos')}>
+      headerRight: () => (
+        <TouchableOpacity
+          style={{
+            marginHorizontal: 20,
+          }}
+          onPress={() => navigation.push('Infos')}>
           <MaterialCommunityIcons
             name="information-outline"
             size={24}
-            color={colors.secondary}
+            color="#fff"
           />
         </TouchableOpacity>
       ),
     });
     if (!reciters.length) getReciters();
   }, [navigation]);
+
   return (
-    <View style={styles.container}>
+    <View style={styles.container(colors.background)}>
       <View style={{flex: 1}}>
+        {/* search box */}
         <Search search={search} />
+
+        {/* display reciters list */}
         {!loading ? (
           reciters.length ? (
             <FlatList
@@ -96,15 +109,17 @@ const HomeScreen = ({navigation}) => {
               )}
             />
           ) : searchTerm ? (
+            // if there is no reciters with search term
             <View style={styles.center}>
-              <Text style={styles.noItemsText}>
+              <Text style={styles.noItemsText(colors.gray)}>
                 لا يوجد قارئ بإسم : ' {searchTerm} '
               </Text>
             </View>
           ) : null
         ) : (
+          // loading indicator
           <View style={styles.center}>
-            <ActivityIndicator size="large" color={colors.gary} />
+            <ActivityIndicator size="large" color={colors.gray} />
           </View>
         )}
       </View>
@@ -115,10 +130,10 @@ const HomeScreen = ({navigation}) => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  container: backgroundColor => ({
     flex: 1,
-    backgroundColor: colors.secondary,
-  },
+    backgroundColor,
+  }),
   center: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-  noItemsText: {fontSize: 18, color: colors.gary, fontFamily: fonts.regular},
+  noItemsText: color => ({fontSize: 18, color, fontFamily: fonts.regular}),
 });

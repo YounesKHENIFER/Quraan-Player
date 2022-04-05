@@ -7,18 +7,22 @@ import {
   View,
 } from 'react-native';
 import React, {useCallback, useLayoutEffect, useState} from 'react';
+import {useTheme} from '@react-navigation/native';
+
 import Search from '../components/Search';
 import Item from '../components/Item';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import colors from '../style/colors';
+
 import fonts from '../style/fonts';
 
 const ReciterScreen = ({navigation, route}) => {
+  const {colors} = useTheme();
+
   const [suras, setSuras] = useState([]);
   const [initSuras, setInitSuras] = useState({});
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // getting reciter's suras
   const getSuras = useCallback(async () => {
     setLoading(true);
     try {
@@ -42,6 +46,7 @@ const ReciterScreen = ({navigation, route}) => {
     }
   }, []);
 
+  // search functionality
   const search = useCallback(
     term => {
       if (term.trim()) {
@@ -56,28 +61,21 @@ const ReciterScreen = ({navigation, route}) => {
     [initSuras],
   );
 
+  // initial FETCH
   useLayoutEffect(() => {
     navigation.setOptions({
       title: route.params.reciterName,
-      headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialCommunityIcons
-            name="arrow-right"
-            size={24}
-            color={colors.gary}
-          />
-        </TouchableOpacity>
-      ),
-      headerLeft: () => <View />,
     });
     getSuras();
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container(colors.background)}>
       <View style={{flex: 1}}>
+        {/* SEARCH BOX */}
         <Search search={search} />
         {!loading ? (
+          // render suras
           suras.length ? (
             <FlatList
               // initialNumToRender={suras.length}
@@ -104,15 +102,17 @@ const ReciterScreen = ({navigation, route}) => {
               )}
             />
           ) : searchTerm ? (
+            // if there is no suras with serch term
             <View style={styles.center}>
-              <Text style={styles.noItemsText}>
+              <Text style={styles.noItemsText(colors.gray)}>
                 السورة ' {searchTerm} ' غير متوفرة
               </Text>
             </View>
           ) : null
         ) : (
+          // loading indicator
           <View style={styles.center}>
-            <ActivityIndicator size="large" color={colors.gary} />
+            <ActivityIndicator size="large" color={colors.gray} />
           </View>
         )}
       </View>
@@ -123,10 +123,10 @@ const ReciterScreen = ({navigation, route}) => {
 export default ReciterScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  container: backgroundColor => ({
     flex: 1,
-    backgroundColor: colors.secondary,
-  },
+    backgroundColor,
+  }),
   center: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-  noItemsText: {fontSize: 18, color: colors.gary, fontFamily: fonts.regular},
+  noItemsText: color => ({fontSize: 18, color, fontFamily: fonts.regular}),
 });
