@@ -1,20 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {StatusBar, I18nManager} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import HomeScreen from './screens/HomeScreen';
-import PlayerScreen from './screens/PlayerScreen';
-import ReciterScreen from './screens/ReciterScreen';
-import FavoriteScreen from './screens/FavoritesScreen';
-import InfosScreen from './screens/InfosScreen';
+import {I18nManager} from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
+import RNRestart from 'react-native-restart';
+
 import OfflineScreen from './components/OfflineScreen';
 import SplashScreen from './components/SplashScreen';
+import StackNavigator from './navigations/StackNavigator';
 
-import NetInfo from '@react-native-community/netinfo';
-import fonts from './style/fonts';
-import colors from './style/colors';
+import {ThemeProvider} from './style/useToggleTheme';
+import {LogBox} from 'react-native';
 
-const Stack = createNativeStackNavigator();
+LogBox.ignoreLogs([
+  "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
+]);
 
 try {
   I18nManager.allowRTL(true);
@@ -22,14 +20,16 @@ try {
 } catch (e) {
   console.log(e);
 }
-
 export default function App() {
-  const [connected, setConnected] = useState(false);
+  const [connected, setConnected] = useState(true);
   const [refresh, setRefresh] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   // Subscribe
 
   useEffect(() => {
+    if (!I18nManager.isRTL) {
+      RNRestart.Restart();
+    }
     const unsub = NetInfo.addEventListener(state => {
       setConnected(state.isConnected && state.isInternetReachable);
       setLoading(false);
@@ -39,62 +39,19 @@ export default function App() {
     };
   }, [refresh]);
 
+  // if loading display splash screen
   if (loading) {
     return <SplashScreen />;
   }
+
+  // if not connection found display offline screen
   if (!connected) {
     return <OfflineScreen setRefresh={setRefresh} />;
   }
+  // lunch the app
   return (
-    <>
-      <StatusBar backgroundColor={colors.primary} barStyle="light-content" />
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            animation: 'slide_from_left',
-            headerTitleAlign: 'center',
-            headerShadowVisible: false,
-            headerStyle: {
-              backgroundColor: colors.primary,
-            },
-            headerTitleStyle: {
-              fontSize: 18,
-              fontFamily: fonts.bold,
-              color: '#fff',
-            },
-          }}
-          initialRouteName="Home">
-          <Stack.Screen
-            options={{
-              title: 'قارئ القرآن',
-            }}
-            name="Home"
-            component={HomeScreen}
-          />
-          <Stack.Screen name="Reciter" component={ReciterScreen} />
-          <Stack.Screen
-            name="Player"
-            options={{
-              title: '',
-            }}
-            component={PlayerScreen}
-          />
-          <Stack.Screen
-            options={{
-              title: 'قائمة المفضلة',
-            }}
-            name="Favorite"
-            component={FavoriteScreen}
-          />
-          <Stack.Screen
-            options={{
-              title: 'معلومات عن التطبيق',
-            }}
-            name="Infos"
-            component={InfosScreen}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </>
+    <ThemeProvider>
+      <StackNavigator />
+    </ThemeProvider>
   );
 }

@@ -2,23 +2,25 @@ import {StyleSheet, Text, View, TouchableNativeFeedback} from 'react-native';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import fonts from '../style/fonts';
-import colors from '../style/colors';
+import {useTheme} from '@react-navigation/native';
 
 function Item({onPress, title, subTitle}) {
+  const {colors} = useTheme();
+
   return (
-    <View style={styles.reciterOuterBox}>
+    <View style={styles.reciterOuterBox(colors.border)}>
       <TouchableNativeFeedback
         onPress={onPress}
-        background={TouchableNativeFeedback.Ripple(colors.gary + '4f')}
-        style={styles.reciterOuterBox}>
+        background={TouchableNativeFeedback.Ripple(colors.primary)}
+        style={styles.reciterOuterBox()}>
         {/* navigate to reciter screen */}
         <View style={styles.reciterInnerBox}>
           {/* reciter name */}
           <View style={{alignItems: 'flex-start'}}>
-            <Text style={styles.reciterText}>{title}</Text>
-            <Text style={styles.subTitle}>{subTitle}</Text>
+            <Text style={styles.reciterText(colors.text)}>{title}</Text>
+            <Text style={styles.subTitle(colors.gray)}>{subTitle}</Text>
           </View>
-          <Ionicons name="chevron-back-outline" size={25} color={colors.gary} />
+          <Ionicons name="chevron-back-outline" size={25} color={colors.text} />
         </View>
       </TouchableNativeFeedback>
     </View>
@@ -37,23 +39,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  reciterOuterBox: {
+  reciterOuterBox: borderColor => ({
     paddingVertical: 0,
-    backgroundColor: colors.secondary,
     borderRadius: 8,
     overflow: 'hidden',
-    borderColor: colors.gary + '4f',
+    borderColor,
     borderBottomWidth: 1,
-  },
-  reciterText: {
-    color: colors.text,
+  }),
+  reciterText: color => ({
+    color,
     fontFamily: fonts.bold,
     fontSize: 16,
-  },
-  subTitle: {
+  }),
+  subTitle: color => ({
+    color,
     marginTop: 4,
     fontFamily: fonts.regular,
     fontSize: 14,
-  },
+  }),
   center: {flex: 1, justifyContent: 'center', alignItems: 'center'},
 });
