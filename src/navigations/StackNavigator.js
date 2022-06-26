@@ -1,13 +1,9 @@
 import React from 'react';
-import {StatusBar} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 
 import HomeScreen from '../screens/HomeScreen';
 import PlayerScreen from '../screens/PlayerScreen';
 import ReciterScreen from '../screens/ReciterScreen';
-import FavoriteScreen from '../screens/FavoritesScreen';
-import InfosScreen from '../screens/InfosScreen';
 
 import fonts from '../style/fonts';
 import {MyLightTheme, MyDarkTheme} from '../style/themes';
@@ -58,22 +54,6 @@ const StackNavigator = () => {
           title: '',
         }}
         component={PlayerScreen}
-      />
-      <Stack.Screen
-        options={{
-          headerBackVisible: true,
-          title: 'قائمة المفضلة',
-        }}
-        name="Favorite"
-        component={FavoriteScreen}
-      />
-      <Stack.Screen
-        options={{
-          headerBackVisible: true,
-          title: 'معلومات عن التطبيق',
-        }}
-        name="Infos"
-        component={InfosScreen}
       />
     </Stack.Navigator>
   );

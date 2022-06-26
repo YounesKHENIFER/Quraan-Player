@@ -2,13 +2,12 @@ import React, {useCallback, useEffect} from 'react';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {
   BottomTabBar,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import {useTheme} from '@react-navigation/native';
-import {Home, Notification, User} from 'react-native-iconly';
+import {Heart, Heart2, InfoCircle} from 'react-native-iconly';
 
 import StackNavigator from './StackNavigator';
 import {Dimensions, StyleSheet, View} from 'react-native';
@@ -18,6 +17,9 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import InfosScreen from '../screens/InfosScreen';
+import DownloadsScreen from '../screens/DownloadsScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs({navigation, route}) {
@@ -27,8 +29,8 @@ export default function BottomTabs({navigation, route}) {
   const listeners = useCallback(
     index => ({
       focus: () => {
-        indicator.value = withSpring(WIDTH * index, {mass: 0.7});
-        // indicator.value = withTiming(WIDTH * index);
+        // indicator.value = withSpring(-WIDTH * index, {mass: 0.7});
+        indicator.value = withTiming(-WIDTH * index);
       },
     }),
     [],
@@ -36,16 +38,27 @@ export default function BottomTabs({navigation, route}) {
   return (
     <Tab.Navigator
       detachInactiveScreens={true}
-      initialRouteName="Player"
+      initialRouteName="Main"
       screenOptions={() => ({
         headerShown: false,
         headerStyle: {
           elevation: 0,
           shadowOpacity: 0,
-          backgroundColor: colors.background,
+          backgroundColor: colors.primary,
+        },
+        headerTitleStyle: {
+          fontSize: 18,
+          fontFamily: 'Tajawal-Bold',
+          color: '#fff',
+        },
+        headerTintColor: '#fff',
+        tabBarLabelStyle: {
+          fontFamily: 'Tajawal-Bold',
+          fontSize: 10,
+          marginTop: 0,
         },
         headerTitleAlign: 'center',
-        tabBarShowLabel: false,
+        tabBarShowLabel: true,
         tabBarHideOnKeyboard: true,
         tabBarStyle: styles.tabBar,
         tabBarActiveTintColor: colors.primary,
@@ -53,58 +66,71 @@ export default function BottomTabs({navigation, route}) {
       })}
       tabBar={props => <CustomTabBar {...props} indicator={indicator} />}>
       <Tab.Screen
-        name="Home"
-        component={StackNavigator}
+        name="Infos"
+        component={InfosScreen}
         options={{
+          tabBarLabel: 'معلومات',
+          title: 'معلومات عن التطبيق',
+          headerShown: true,
           tabBarIcon: ({focused, color, size}) => {
             return focused ? (
-              <Home set="bold" size={size} primaryColor={color} />
+              <InfoCircle set="bold" size={size} primaryColor={color} />
             ) : (
-              <Home set="light" size={size} primaryColor={color} />
+              <InfoCircle set="light" size={size} primaryColor={color} />
             );
           },
         }}
         listeners={() => listeners(0)}
       />
       <Tab.Screen
-        name="Search"
-        component={StackNavigator}
+        name="Favorites"
+        component={FavoritesScreen}
         options={{
+          headerShown: true,
+          title: 'قائمة المفضلة',
+          tabBarLabel: 'المفضلة',
           tabBarIcon: ({focused, color, size}) => {
             return focused ? (
-              <Ionicons name="search" size={size} color={color} />
+              <Heart2 set="bold" size={size} primaryColor={color} />
             ) : (
-              <Ionicons name="search-outline" size={size} color={color} />
+              <Heart set="curved" size={size} primaryColor={color} />
             );
           },
         }}
         listeners={() => listeners(1)}
       />
       <Tab.Screen
-        name="Notifications"
-        component={StackNavigator}
+        name="Downloads"
+        component={DownloadsScreen}
         options={{
+          tabBarLabel: 'التحميلات',
+          title: 'قائمة التحميلات',
           headerShown: true,
           tabBarIcon: ({focused, color, size}) => {
             return focused ? (
-              <Notification set="bold" size={size} primaryColor={color} />
+              <Ionicons name="cloud-download" size={size} color={color} />
             ) : (
-              <Notification set="light" size={size} primaryColor={color} />
+              <Ionicons
+                name="cloud-download-outline"
+                size={size}
+                color={color}
+              />
             );
           },
         }}
         listeners={() => listeners(2)}
       />
+
       <Tab.Screen
-        name="Profile"
+        name="Main"
         component={StackNavigator}
         options={{
-          lazy: true,
+          tabBarLabel: 'الإستماع',
           tabBarIcon: ({focused, color, size}) => {
             return focused ? (
-              <User set="bold" size={size} primaryColor={color} />
+              <Ionicons name="headset" size={size} color={color} />
             ) : (
-              <User set="light" size={size} primaryColor={color} />
+              <Ionicons name="headset-outline" size={size} color={color} />
             );
           },
         }}
@@ -116,7 +142,7 @@ export default function BottomTabs({navigation, route}) {
 
 function CustomTabBar(props) {
   const {
-    colors: {primary},
+    colors: {primary, background},
   } = useTheme();
 
   const rStyle = useAnimatedStyle(() => {
@@ -125,7 +151,7 @@ function CustomTabBar(props) {
     };
   });
   return (
-    <View>
+    <View style={{backgroundColor: background}}>
       <Animated.View style={[rStyle, styles.indicator(primary)]} />
       <BottomTabBar {...props} />
     </View>
@@ -134,15 +160,10 @@ function CustomTabBar(props) {
 
 const WIDTH = Dimensions.get('window').width / 4;
 const INDICATOR_WIDTH = WIDTH - WIDTH / 2;
-function getSwiper(route) {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
-
-  return routeName === 'Home' ? true : false;
-}
 
 const styles = StyleSheet.create({
   indicator: backgroundColor => ({
-    height: 5,
+    height: 4,
     width: INDICATOR_WIDTH,
     backgroundColor,
     position: 'absolute',
@@ -156,6 +177,8 @@ const styles = StyleSheet.create({
     elevation: 0,
     shadowOpacity: 0,
     borderTopWidth: 0.5,
+    paddingBottom: 5,
+    paddingTop: 5,
     backgroundColor: 'transparent',
   },
 });
