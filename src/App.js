@@ -5,10 +5,10 @@ import RNRestart from 'react-native-restart';
 
 import OfflineScreen from './components/OfflineScreen';
 import SplashScreen from './components/SplashScreen';
-import StackNavigator from './navigations/StackNavigator';
 
 import {ThemeProvider} from './style/useToggleTheme';
 import {LogBox} from 'react-native';
+import Index from './navigations/Index';
 
 LogBox.ignoreLogs([
   "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
@@ -51,7 +51,7 @@ export default function App() {
   // lunch the app
   return (
     <ThemeProvider>
-      <StackNavigator />
+      <Index />
     </ThemeProvider>
   );
 }

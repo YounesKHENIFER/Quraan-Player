@@ -3,8 +3,13 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
+         <item name="android:windowDisablePreview">true</item>
         <item name="android:forceDarkAllowed">false</item>
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+    </style>
+
+<style name="SplashScreenTheme" parent="SplashScreen_SplashTheme">
+        <item name="colorPrimaryDark">@color/status_bar_color</item>
     </style>
 
 </resources>
