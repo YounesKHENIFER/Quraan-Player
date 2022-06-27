@@ -8,7 +8,7 @@
 - there is more than 200 Reciter
 - you can listen to each Reciter
 - i hope you like it and give us a ⭐ :)
-- link for donwload (universal apk) : https://bit.ly/3DImJsL
+- link for donwload (universal apk) : https://bit.ly/quraan-1-0-4
 - link for donwload (x86 cpu apk) : https://bit.ly/38ve4yw
 - link for donwload (x86_64 cpu apk) : https://bit.ly/3Keb6MT
 - link for donwload (arm64-v8a cpu apk) : https://bit.ly/35FIqx4

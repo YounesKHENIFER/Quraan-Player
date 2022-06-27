@@ -8,10 +8,11 @@ import ReciterScreen from '../screens/ReciterScreen';
 import fonts from '../style/fonts';
 import {MyLightTheme, MyDarkTheme} from '../style/themes';
 import useToggleTheme from '../style/useToggleTheme';
+import OfflineScreen from '../components/OfflineScreen';
 
 const Stack = createStackNavigator();
 
-const StackNavigator = () => {
+const StackNavigator = ({connected, setRefresh}) => {
   const {isDark} = useToggleTheme();
   const colors = isDark ? MyDarkTheme.colors : MyLightTheme.colors;
 
@@ -38,14 +39,22 @@ const StackNavigator = () => {
           title: 'قارئ القرآن',
         }}
         name="Home"
-        component={HomeScreen}
+        component={
+          connected
+            ? HomeScreen
+            : () => <OfflineScreen setRefresh={setRefresh} />
+        }
       />
       <Stack.Screen
         options={{
           headerBackVisible: true,
         }}
         name="Reciter"
-        component={ReciterScreen}
+        component={
+          connected
+            ? ReciterScreen
+            : () => <OfflineScreen setRefresh={setRefresh} />
+        }
       />
       <Stack.Screen
         name="Player"
