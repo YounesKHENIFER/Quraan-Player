@@ -6,26 +6,28 @@ import {
   View,
 } from 'react-native';
 import React, {useCallback, useLayoutEffect, useState} from 'react';
-import AsyncStorageLib from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused, useTheme} from '@react-navigation/native';
 
 import Item from '../components/Item';
 import fonts from '../style/fonts';
+import RNFetchBlob from 'rn-fetch-blob';
+import {getSavedSuras} from '../utils/downloadAudio';
 
-const FavoritesScreen = ({navigation}) => {
+const DownloadsScreen = ({navigation}) => {
   const isFocused = useIsFocused();
-
   const {colors} = useTheme();
-  const [favorites, setFavorites] = useState([]);
+  const [downloads, setDownloads] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // getting favorites list
-  const getFavorites = useCallback(async () => {
+  // getting downloads list
+  const getDownloads = useCallback(async () => {
     try {
       setLoading(true);
-      let savedValue = await AsyncStorageLib.getItem('favorites');
-      const fav = savedValue != null ? JSON.parse(savedValue) : [];
-      setFavorites(fav);
+      //get saved suras
+      const suras = await getSavedSuras();
+
+      setDownloads(suras);
     } catch (error) {
     } finally {
       setLoading(false);
@@ -33,34 +35,33 @@ const FavoritesScreen = ({navigation}) => {
   }, []);
 
   useLayoutEffect(() => {
-    getFavorites();
+    getDownloads();
   }, [isFocused]);
 
   return (
     <View style={styles.container(colors.background)}>
       {!loading ? (
-        // render favorites suras
+        // render downloads suras
         <View style={{flex: 1}}>
           {/* header */}
           <View style={styles.header(colors.primary)} />
           {/* data */}
-          {favorites.length ? (
+          {downloads.length ? (
             <ScrollView
               showsVerticalScrollIndicator={false}
               style={{paddingHorizontal: 15, paddingTop: 12, marginTop: 8}}>
-              {favorites.map((favorite, i) => (
+              {downloads.map((sura, i) => (
                 <Item
-                  key={`${favorite.id}- ${i}`}
-                  title={favorite.title}
-                  subTitle={favorite.reciterName}
+                  key={`${sura.id}- ${i}`}
+                  title={sura.title}
+                  subTitle={sura.reciterName}
                   onPress={() =>
                     navigation.navigate('Player', {
-                      suras: favorites,
-                      reciterName: favorite.reciterName,
-                      rewaya: favorite.rewaya,
-                      suraUrl: favorite.url,
-                      suraId: favorite.id,
-                      suraName: favorite.title,
+                      suras: downloads,
+                      reciterName: sura.reciterName,
+                      suraUrl: sura.url,
+                      suraId: sura.id,
+                      suraName: sura.title,
                     })
                   }
                 />
@@ -72,7 +73,7 @@ const FavoritesScreen = ({navigation}) => {
             <View style={styles.center}>
               <View style={styles.header} />
               <Text style={styles.noItemsText(colors.text)}>
-                لا يوجد عناصر في قائمة المفضلة
+                لا يوجد عناصر في قائمة التحميلات
               </Text>
             </View>
           )}
@@ -88,7 +89,7 @@ const FavoritesScreen = ({navigation}) => {
   );
 };
 
-export default FavoritesScreen;
+export default DownloadsScreen;
 
 const styles = StyleSheet.create({
   container: backgroundColor => ({

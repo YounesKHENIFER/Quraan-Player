@@ -40,7 +40,6 @@ const ReciterScreen = ({navigation, route}) => {
       setSuras(costumSuras);
       setInitSuras(costumSuras);
     } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }

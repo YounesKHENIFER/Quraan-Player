@@ -23,7 +23,7 @@ export const MyDarkTheme = {
     iconBackground: '#eee',
     text: '#eee',
     gray: '#777',
-    primaryText: '#089b8d',
+    primaryText: '#089b9d',
     border: '#333',
     track: '#ddd',
   },

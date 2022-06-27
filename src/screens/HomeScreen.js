@@ -4,23 +4,22 @@ import {
   ActivityIndicator,
   View,
   FlatList,
-  TouchableOpacity,
 } from 'react-native';
-import React, {useCallback, useLayoutEffect, useState} from 'react';
-import {useTheme} from '@react-navigation/native';
+import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
+import {useScrollToTop, useTheme} from '@react-navigation/native';
 
 import Search from '../components/Search';
 import Item from '../components/Item';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import fonts from '../style/fonts';
 
 const HomeScreen = ({navigation}) => {
+  const flatListRef = useRef();
+  useScrollToTop(flatListRef);
   const {colors} = useTheme();
   const [initreciters, setinitReciters] = useState([]);
   const [reciters, setReciters] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-
   // getting reciters data
   const getReciters = useCallback(async () => {
     setLoading(true);
@@ -30,7 +29,6 @@ const HomeScreen = ({navigation}) => {
       setReciters(data);
       setinitReciters(data);
     } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -53,32 +51,8 @@ const HomeScreen = ({navigation}) => {
 
   // initial fetch of reciters
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <TouchableOpacity
-          style={{
-            marginHorizontal: 20,
-          }}
-          onPress={() => navigation.push('Favorite')}>
-          <MaterialCommunityIcons name="heart-outline" size={24} color="#fff" />
-        </TouchableOpacity>
-      ),
-      headerRight: () => (
-        <TouchableOpacity
-          style={{
-            marginHorizontal: 20,
-          }}
-          onPress={() => navigation.push('Infos')}>
-          <MaterialCommunityIcons
-            name="information-outline"
-            size={24}
-            color="#fff"
-          />
-        </TouchableOpacity>
-      ),
-    });
     if (!reciters.length) getReciters();
-  }, [navigation]);
+  }, []);
 
   return (
     <View style={styles.container(colors.background)}>
@@ -90,6 +64,7 @@ const HomeScreen = ({navigation}) => {
         {!loading ? (
           reciters.length ? (
             <FlatList
+              ref={flatListRef}
               contentContainerStyle={{paddingHorizontal: 15}}
               keyExtractor={item => `${item.id} - ${item.name}`}
               showsVerticalScrollIndicator={false}
