@@ -22,7 +22,6 @@ import NetInfo from '@react-native-community/netinfo';
 import InfosScreen from '../screens/InfosScreen';
 import DownloadsScreen from '../screens/DownloadsScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
-import OfflineScreen from '../components/OfflineScreen';
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs({navigation, route}) {
@@ -147,11 +146,9 @@ export default function BottomTabs({navigation, route}) {
 
       <Tab.Screen
         name="Main"
-        component={
-          connected
-            ? StackNavigator
-            : () => <OfflineScreen setRefresh={setRefresh} />
-        }
+        component={() => (
+          <StackNavigator connected={connected} setRefresh={setRefresh} />
+        )}
         options={{
           tabBarLabel: 'الإستماع',
           tabBarIcon: ({focused, color, size}) => {
