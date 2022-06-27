@@ -9,6 +9,13 @@ export default async function (sura) {
     const path = `${dirs.DocumentDir}/quran/suras/${reciterName} - ${title}.mp3`;
     const pathAndroid = `${dirs.DownloadDir}/quran/suras/${reciterName} - ${title}.mp3`;
 
+    // verify that file not exists
+    const exist = await RNFetchBlob.fs.exists(pathAndroid);
+    if (exist) {
+      return ToastAndroid.show('السورة محملة سابقا', ToastAndroid.SHORT);
+    }
+
+    // download file
     const res = await RNFetchBlob.config({
       path,
       fileCache: true,
@@ -42,15 +49,21 @@ export default async function (sura) {
 }
 
 async function checkSavedSuras(suras) {
-  return suras.filter(async sura => {
-    const res = await RNFetchBlob.fs.exists(sura.url);
-    console.log({res});
-    return res;
-  });
+  const results = await Promise.all(
+    suras.map(async sura => {
+      const exist = await RNFetchBlob.fs.exists(sura.url);
+      return {...sura, exist};
+    }),
+  );
+  return results;
 }
 export async function getSavedSuras() {
   let savedValue = await AsyncStorage.getItem('downloads');
   const suras = savedValue != null ? JSON.parse(savedValue) : [];
-  const data = await checkSavedSuras(suras);
-  return data;
+  const checkedSuras = await checkSavedSuras(suras);
+  const filteredSuras = checkedSuras.filter(sura => sura.exist);
+
+  // update suras
+  await AsyncStorage.setItem('downloads', JSON.stringify(filteredSuras));
+  return filteredSuras;
 }

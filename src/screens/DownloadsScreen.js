@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import React, {useCallback, useLayoutEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useTheme} from '@react-navigation/native';
+import {useIsFocused, useTheme} from '@react-navigation/native';
 
 import Item from '../components/Item';
 import fonts from '../style/fonts';
@@ -15,6 +15,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import {getSavedSuras} from '../utils/downloadAudio';
 
 const DownloadsScreen = ({navigation}) => {
+  const isFocused = useIsFocused();
   const {colors} = useTheme();
   const [downloads, setDownloads] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,21 +24,11 @@ const DownloadsScreen = ({navigation}) => {
   const getDownloads = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('first');
+      //get saved suras
+      const suras = await getSavedSuras();
 
-      // check if downloaded files still in phone
-      // const suras = await getSavedSuras();
-      let savedValue = await AsyncStorage.getItem('downloads');
-      const suras = savedValue != null ? JSON.parse(savedValue) : [];
-      // await AsyncStorageLib.setItem('downloads', JSON.stringify(suras));
-
-      // let savedValue = await AsyncStorageLib.getItem('downloads');
-      // const suras = savedValue != null ? JSON.parse(savedValue) : [];
-
-      console.log('last');
       setDownloads(suras);
     } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -45,7 +36,7 @@ const DownloadsScreen = ({navigation}) => {
 
   useLayoutEffect(() => {
     getDownloads();
-  }, []);
+  }, [isFocused]);
 
   return (
     <View style={styles.container(colors.background)}>

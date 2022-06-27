@@ -7,12 +7,14 @@ import {
 } from 'react-native';
 import React, {useCallback, useLayoutEffect, useState} from 'react';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
-import {useTheme} from '@react-navigation/native';
+import {useIsFocused, useTheme} from '@react-navigation/native';
 
 import Item from '../components/Item';
 import fonts from '../style/fonts';
 
 const FavoritesScreen = ({navigation}) => {
+  const isFocused = useIsFocused();
+
   const {colors} = useTheme();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +27,6 @@ const FavoritesScreen = ({navigation}) => {
       const fav = savedValue != null ? JSON.parse(savedValue) : [];
       setFavorites(fav);
     } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -33,7 +34,7 @@ const FavoritesScreen = ({navigation}) => {
 
   useLayoutEffect(() => {
     getFavorites();
-  }, []);
+  }, [isFocused]);
 
   return (
     <View style={styles.container(colors.background)}>
@@ -53,7 +54,7 @@ const FavoritesScreen = ({navigation}) => {
                   title={favorite.title}
                   subTitle={favorite.reciterName}
                   onPress={() =>
-                    navigation.push('Player', {
+                    navigation.navigate('Player', {
                       suras: favorites,
                       reciterName: favorite.reciterName,
                       rewaya: favorite.rewaya,

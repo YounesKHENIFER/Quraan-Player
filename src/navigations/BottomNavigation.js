@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -17,9 +17,12 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import NetInfo from '@react-native-community/netinfo';
+
 import InfosScreen from '../screens/InfosScreen';
 import DownloadsScreen from '../screens/DownloadsScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
+import OfflineScreen from '../components/OfflineScreen';
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs({navigation, route}) {
@@ -35,6 +38,27 @@ export default function BottomTabs({navigation, route}) {
     }),
     [],
   );
+
+  const [connected, setConnected] = useState(true);
+  const [refresh, setRefresh] = useState(false);
+  const [loading, setLoading] = useState(false);
+  // Subscribe
+
+  useEffect(() => {
+    const unsub = NetInfo.addEventListener(state => {
+      setConnected(state.isConnected && state.isInternetReachable);
+      setLoading(false);
+    });
+    return () => {
+      unsub();
+    };
+  }, [refresh]);
+
+  // if loading display splash screen
+  if (loading) {
+    return <SplashScreen />;
+  }
+
   return (
     <Tab.Navigator
       detachInactiveScreens={true}
@@ -61,7 +85,7 @@ export default function BottomTabs({navigation, route}) {
         tabBarShowLabel: true,
         tabBarHideOnKeyboard: true,
         tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: colors.primary,
+        tabBarActiveTintColor: colors.primaryText,
         tabBarInactiveTintColor: colors.gray,
       })}
       tabBar={props => <CustomTabBar {...props} indicator={indicator} />}>
@@ -123,7 +147,11 @@ export default function BottomTabs({navigation, route}) {
 
       <Tab.Screen
         name="Main"
-        component={StackNavigator}
+        component={
+          connected
+            ? StackNavigator
+            : () => <OfflineScreen setRefresh={setRefresh} />
+        }
         options={{
           tabBarLabel: 'الإستماع',
           tabBarIcon: ({focused, color, size}) => {
@@ -142,7 +170,7 @@ export default function BottomTabs({navigation, route}) {
 
 function CustomTabBar(props) {
   const {
-    colors: {primary, background},
+    colors: {primaryText, background},
   } = useTheme();
 
   const rStyle = useAnimatedStyle(() => {
@@ -152,7 +180,7 @@ function CustomTabBar(props) {
   });
   return (
     <View style={{backgroundColor: background}}>
-      <Animated.View style={[rStyle, styles.indicator(primary)]} />
+      <Animated.View style={[rStyle, styles.indicator(primaryText)]} />
       <BottomTabBar {...props} />
     </View>
   );

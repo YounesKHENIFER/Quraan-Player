@@ -21,7 +21,6 @@ export const ThemeProvider = ({children}) => {
       const isDark = await AsyncStorage.getItem('AppTheme');
       setIsDark(JSON.parse(isDark));
     } catch (e) {
-      console.log(e);
     } finally {
       setThemeLoading(false);
     }
@@ -36,9 +35,7 @@ export const ThemeProvider = ({children}) => {
     setisDark(value);
     try {
       await AsyncStorage.setItem('AppTheme', JSON.stringify(value));
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   }, []);
 
   if (themeLoading) {

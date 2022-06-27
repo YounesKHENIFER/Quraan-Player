@@ -29,7 +29,6 @@ const HomeScreen = ({navigation}) => {
       setReciters(data);
       setinitReciters(data);
     } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }

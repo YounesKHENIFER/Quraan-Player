@@ -30,6 +30,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import fonts from '../style/fonts';
 import downloadAudio from '../utils/downloadAudio';
+import {Download} from 'react-native-iconly';
 
 // player setup
 async function setupPlayer(suras, firstItem) {
@@ -110,41 +111,53 @@ export default function PlayerScreen({navigation, route}) {
           setIsFavorite(false);
         }
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }, [currentSuraTrack]);
 
   // initial player setup
   useLayoutEffect(() => {
-    const firstIndex = suras.findIndex(sura => sura.id === suraId);
+    const firstIndex = suras.findIndex(
+      sura => sura.id === suraId && sura.reciterName === reciterName,
+    );
     setupPlayer(suras, firstIndex);
-  }, []);
+  }, [suraUrl, reciterName, suraId]);
 
   // UI changes
   useLayoutEffect(() => {
     navigation.setOptions({
       title: currentSuraTrack?.reciterName ?? reciterName,
+      headerRight: () => (
+        <TouchableOpacity
+          style={{
+            marginHorizontal: 20,
+          }}
+          onPress={() => downloadAudio(currentSuraTrack)}>
+          <Download set="curved" primaryColor="#fff" size={28} />
+        </TouchableOpacity>
+      ),
     });
     if (currentSuraTrack) {
       if (firstrender.current) {
         firstrender.current = false;
       } else {
-        setSuraTitle(currentSuraTrack.title);
+        setSuraTitle(currentSuraTrack?.title);
       }
       getFavorites();
     }
   }, [currentSuraTrack]);
 
   // next && back handler
-  const skip = useCallback(async to => {
-    let currentTrack = await TrackPlayer.getCurrentTrack();
-    if (to === 'prev' && currentTrack > 0) {
-      await TrackPlayer.skipToPrevious();
-    } else if (to === 'next' && currentTrack < suras.length - 1) {
-      await TrackPlayer.skipToNext();
-    }
-  }, []);
+  const skip = useCallback(
+    async to => {
+      let currentTrack = await TrackPlayer.getCurrentTrack();
+      if (to === 'prev' && currentTrack > 0) {
+        await TrackPlayer.skipToPrevious();
+      } else if (to === 'next' && currentTrack < suras.length - 1) {
+        await TrackPlayer.skipToNext();
+      }
+    },
+    [suras.length],
+  );
 
   // change icon based on repeat mode
   const getRepeatIcon = useCallback(() => {
@@ -201,9 +214,7 @@ export default function PlayerScreen({navigation, route}) {
           setIsFavorite(false);
         }
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }, [currentSuraTrack]);
 
   // track player listner to get sura name
@@ -214,12 +225,11 @@ export default function PlayerScreen({navigation, route}) {
       event.nextTrack !== undefined
     ) {
       const track = await TrackPlayer.getTrack(event.nextTrack);
-      const {title, id, url, rewaya, reciterName} = track;
+      const {title, id, url, reciterName} = track;
       setCurrentSuraTrack({
         title,
         id,
         url,
-        rewaya,
         reciterName,
       });
     }
@@ -229,7 +239,7 @@ export default function PlayerScreen({navigation, route}) {
   useTrackPlayerEvents([Event.PlaybackQueueEnded], async () => {
     if (repeatMode === 'off') {
       await TrackPlayer.destroy();
-      navigation.pop();
+      navigation.goBack();
     }
   });
 
@@ -253,9 +263,7 @@ export default function PlayerScreen({navigation, route}) {
       <View style={styles.topSection}>
         <Text style={styles.suraName(colors.text)}>سورة {suraTitle}</Text>
       </View>
-      <TouchableOpacity onPress={() => downloadAudio(currentSuraTrack)}>
-        <Text>Download</Text>
-      </TouchableOpacity>
+
       {/* bottm section */}
       <View style={styles.bottomSection(colors.background)}>
         {/* progress bar section */}
@@ -300,7 +308,7 @@ export default function PlayerScreen({navigation, route}) {
             <TouchableNativeFeedback
               style={styles.controllerBtn}
               onPress={() => skip('prev')}
-              background={TouchableNativeFeedback.Ripple(colors.background)}>
+              background={TouchableNativeFeedback.Ripple(colors.primary)}>
               <View style={styles.controllerBtn}>
                 <Ionicons
                   name="play-skip-back-outline"
@@ -340,7 +348,7 @@ export default function PlayerScreen({navigation, route}) {
             <TouchableNativeFeedback
               style={styles.controllerBtn}
               onPress={() => skip('next')}
-              background={TouchableNativeFeedback.Ripple(colors.background)}>
+              background={TouchableNativeFeedback.Ripple(colors.primary)}>
               <View style={styles.controllerBtn}>
                 <Ionicons
                   name="play-skip-forward-outline"
