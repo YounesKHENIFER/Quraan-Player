@@ -2,7 +2,9 @@
   package="com.quraanreader">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <application
       android:name=".MainApplication"
       android:supportsRtl="true"
@@ -21,6 +23,7 @@
         android:windowSoftInputMode="adjustResize">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
+            <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>

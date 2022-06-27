@@ -6,7 +6,13 @@ import {
   View,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import TrackPlayer, {
   Capability,
   Event,
@@ -23,6 +29,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import fonts from '../style/fonts';
+import downloadAudio from '../utils/downloadAudio';
 
 // player setup
 async function setupPlayer(suras, firstItem) {
@@ -54,9 +61,7 @@ async function setupPlayer(suras, firstItem) {
     await TrackPlayer.add(suras);
     await TrackPlayer.skip(firstItem);
     await TrackPlayer.play();
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 }
 
 // toggle playing audio function
@@ -78,7 +83,7 @@ export default function PlayerScreen({navigation, route}) {
   const progress = useProgress();
   const playBackState = usePlaybackState();
 
-  let {reciterName, suraId, suras, suraName} = route.params;
+  let {reciterName, suraId, suras, suraName, suraUrl} = route.params;
   const [currentSuraTrack, setCurrentSuraTrack] = useState(null);
   const [repeatMode, setRepeatMode] = useState('off');
   const [isFavorite, setIsFavorite] = useState(false);
@@ -210,7 +215,6 @@ export default function PlayerScreen({navigation, route}) {
     ) {
       const track = await TrackPlayer.getTrack(event.nextTrack);
       const {title, id, url, rewaya, reciterName} = track;
-
       setCurrentSuraTrack({
         title,
         id,
@@ -249,6 +253,9 @@ export default function PlayerScreen({navigation, route}) {
       <View style={styles.topSection}>
         <Text style={styles.suraName(colors.text)}>سورة {suraTitle}</Text>
       </View>
+      <TouchableOpacity onPress={() => downloadAudio(currentSuraTrack)}>
+        <Text>Download</Text>
+      </TouchableOpacity>
       {/* bottm section */}
       <View style={styles.bottomSection(colors.background)}>
         {/* progress bar section */}
