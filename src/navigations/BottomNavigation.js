@@ -9,7 +9,6 @@ import {
 import {useTheme} from '@react-navigation/native';
 import {Heart, Heart2, InfoCircle} from 'react-native-iconly';
 
-import StackNavigator from './StackNavigator';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -19,6 +18,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import NetInfo from '@react-native-community/netinfo';
 
+import PlayerStack from './PlayerStack';
+import MushafStack from './MushafStack';
 import InfosScreen from '../screens/InfosScreen';
 import DownloadsScreen from '../screens/DownloadsScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
@@ -123,6 +124,22 @@ export default function BottomTabs({navigation, route}) {
         listeners={() => listeners(1)}
       />
       <Tab.Screen
+        name="MushafStack"
+        component={MushafStack}
+        options={{
+          tabBarLabel: 'المصحف',
+          title: 'المصحف',
+          tabBarIcon: ({focused, color, size}) => {
+            return focused ? (
+              <Ionicons name="book" size={size} color={color} />
+            ) : (
+              <Ionicons name="book-outline" size={size} color={color} />
+            );
+          },
+        }}
+        listeners={() => listeners(2)}
+      />
+      <Tab.Screen
         name="Downloads"
         component={DownloadsScreen}
         options={{
@@ -141,14 +158,10 @@ export default function BottomTabs({navigation, route}) {
             );
           },
         }}
-        listeners={() => listeners(2)}
+        listeners={() => listeners(3)}
       />
-
       <Tab.Screen
         name="Main"
-        component={() => (
-          <StackNavigator connected={connected} setRefresh={setRefresh} />
-        )}
         options={{
           tabBarLabel: 'الإستماع',
           tabBarIcon: ({focused, color, size}) => {
@@ -159,11 +172,20 @@ export default function BottomTabs({navigation, route}) {
             );
           },
         }}
-        listeners={() => listeners(3)}
-      />
+        listeners={() => listeners(4)}>
+        {props => (
+          <PlayerStack
+            {...props}
+            connected={connected}
+            setRefresh={setRefresh}
+          />
+        )}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }
+const WIDTH = Dimensions.get('window').width / 5;
+const INDICATOR_WIDTH = WIDTH - WIDTH / 2;
 
 function CustomTabBar(props) {
   const {
@@ -183,9 +205,6 @@ function CustomTabBar(props) {
   );
 }
 
-const WIDTH = Dimensions.get('window').width / 4;
-const INDICATOR_WIDTH = WIDTH - WIDTH / 2;
-
 const styles = StyleSheet.create({
   indicator: backgroundColor => ({
     height: 4,
@@ -194,8 +213,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: (WIDTH - INDICATOR_WIDTH) / 2, //divide by 2 for indicator left and right (centering indicator)
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
+    borderRadius: 5,
+    // borderBottomRightRadius: 5,
   }),
   tabBar: {
     height: 60,

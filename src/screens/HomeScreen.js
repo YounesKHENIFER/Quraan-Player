@@ -75,7 +75,7 @@ const HomeScreen = ({navigation}) => {
                   title={item.name}
                   subTitle={`${item.count} سورة`}
                   onPress={() =>
-                    navigation.push('Reciter', {
+                    navigation.navigate('Reciter', {
                       reciterName: item.name,
                       reciterId: item.id,
                     })

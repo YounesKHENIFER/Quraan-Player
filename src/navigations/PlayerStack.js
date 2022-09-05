@@ -6,15 +6,13 @@ import PlayerScreen from '../screens/PlayerScreen';
 import ReciterScreen from '../screens/ReciterScreen';
 
 import fonts from '../style/fonts';
-import {MyLightTheme, MyDarkTheme} from '../style/themes';
-import useToggleTheme from '../style/useToggleTheme';
 import OfflineScreen from '../components/OfflineScreen';
+import {useTheme} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 
-const StackNavigator = ({connected, setRefresh}) => {
-  const {isDark} = useToggleTheme();
-  const colors = isDark ? MyDarkTheme.colors : MyLightTheme.colors;
+const PlayerStack = ({connected, setRefresh}) => {
+  const {colors} = useTheme();
 
   return (
     <Stack.Navigator
@@ -38,24 +36,28 @@ const StackNavigator = ({connected, setRefresh}) => {
         options={{
           title: 'قارئ القرآن',
         }}
-        name="Home"
-        component={
-          connected
-            ? HomeScreen
-            : () => <OfflineScreen setRefresh={setRefresh} />
+        name="Home">
+        {props =>
+          connected ? (
+            <HomeScreen {...props} />
+          ) : (
+            <OfflineScreen {...props} setRefresh={setRefresh} />
+          )
         }
-      />
+      </Stack.Screen>
       <Stack.Screen
         options={{
           headerBackVisible: true,
         }}
-        name="Reciter"
-        component={
-          connected
-            ? ReciterScreen
-            : () => <OfflineScreen setRefresh={setRefresh} />
+        name="Reciter">
+        {props =>
+          connected ? (
+            <ReciterScreen {...props} />
+          ) : (
+            <OfflineScreen setRefresh={setRefresh} {...props} />
+          )
         }
-      />
+      </Stack.Screen>
       <Stack.Screen
         name="Player"
         options={{
@@ -68,4 +70,4 @@ const StackNavigator = ({connected, setRefresh}) => {
   );
 };
 
-export default StackNavigator;
+export default PlayerStack;
