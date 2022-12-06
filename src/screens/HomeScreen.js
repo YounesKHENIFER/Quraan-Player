@@ -5,34 +5,20 @@ import {
   View,
   FlatList,
 } from 'react-native';
-import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {useScrollToTop, useTheme} from '@react-navigation/native';
 
 import Search from '../components/Search';
 import Item from '../components/Item';
 import fonts from '../style/fonts';
-
+import initreciters from '../assets/quran_data/reciters.json';
 const HomeScreen = ({navigation}) => {
   const flatListRef = useRef();
   useScrollToTop(flatListRef);
   const {colors} = useTheme();
-  const [initreciters, setinitReciters] = useState([]);
-  const [reciters, setReciters] = useState([]);
+  const [reciters, setReciters] = useState(initreciters);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  // getting reciters data
-  const getReciters = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('https://qurani-api.herokuapp.com/api/reciters');
-      const data = await res.json();
-      setReciters(data);
-      setinitReciters(data);
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   // search functinality
   const search = useCallback(
@@ -49,11 +35,6 @@ const HomeScreen = ({navigation}) => {
     [initreciters, loading],
   );
 
-  // initial fetch of reciters
-  useLayoutEffect(() => {
-    if (!reciters.length) getReciters();
-  }, []);
-
   return (
     <View style={styles.container(colors.background)}>
       <View style={{flex: 1}}>
@@ -69,7 +50,7 @@ const HomeScreen = ({navigation}) => {
               keyExtractor={item => `${item.id} - ${item.name}`}
               showsVerticalScrollIndicator={false}
               data={reciters}
-              ListHeaderComponent={() => <View style={{height: 32}} />}
+              ListHeaderComponent={<View style={{height: 32}} />}
               renderItem={({item}) => (
                 <Item
                   title={item.name}

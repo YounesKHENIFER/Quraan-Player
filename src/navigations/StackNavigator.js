@@ -38,24 +38,20 @@ const StackNavigator = ({connected, setRefresh}) => {
         options={{
           title: 'قارئ القرآن',
         }}
-        name="Home"
-        component={
-          connected
-            ? HomeScreen
-            : () => <OfflineScreen setRefresh={setRefresh} />
-        }
-      />
+        name="Home">
+        {connected
+          ? props => <HomeScreen {...props} />
+          : props => <OfflineScreen {...props} setRefresh={setRefresh} />}
+      </Stack.Screen>
       <Stack.Screen
         options={{
           headerBackVisible: true,
         }}
-        name="Reciter"
-        component={
-          connected
-            ? ReciterScreen
-            : () => <OfflineScreen setRefresh={setRefresh} />
-        }
-      />
+        name="Reciter">
+        {connected
+          ? props => <ReciterScreen {...props} />
+          : props => <OfflineScreen {...props} setRefresh={setRefresh} />}
+      </Stack.Screen>
       <Stack.Screen
         name="Player"
         options={{

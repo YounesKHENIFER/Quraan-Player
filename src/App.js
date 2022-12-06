@@ -9,6 +9,9 @@ import Index from './navigations/Index';
 LogBox.ignoreLogs([
   "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
 ]);
+LogBox.ignoreLogs([
+  'Require cycles are allowed, but can result in uninitialized values. Consider refactoring to remove the need for a cycle.',
+]);
 
 try {
   I18nManager.allowRTL(true);

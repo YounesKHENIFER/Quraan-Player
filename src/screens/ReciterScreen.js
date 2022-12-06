@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useLayoutEffect, useState} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {useTheme} from '@react-navigation/native';
 
 import Search from '../components/Search';
 import Item from '../components/Item';
+import getReciter from '../utils/getReciter';
 
 import fonts from '../style/fonts';
 
@@ -21,15 +22,14 @@ const ReciterScreen = ({navigation, route}) => {
   const [initSuras, setInitSuras] = useState({});
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [rec, setReq] = useState('init');
 
   // getting reciter's suras
-  const getSuras = useCallback(async () => {
+  const getSuras = async () => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `https://qurani-api.herokuapp.com/api/reciters/${route.params.reciterId}`,
-      );
-      const data = await res.json();
+      const data = await getReciter(route.params.reciterId);
+
       const costumSuras = data.surasData.map(sura => ({
         url: sura.url,
         title: sura.name,
@@ -37,13 +37,15 @@ const ReciterScreen = ({navigation, route}) => {
         rewaya: data.rewaya,
         reciterName: data.name,
       }));
+
+      console.log(data.name);
       setSuras(costumSuras);
       setInitSuras(costumSuras);
     } catch (error) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   // search functionality
   const search = useCallback(
@@ -61,10 +63,11 @@ const ReciterScreen = ({navigation, route}) => {
   );
 
   // initial FETCH
-  useLayoutEffect(() => {
+  useEffect(() => {
     navigation.setOptions({
       title: route.params.reciterName,
     });
+
     getSuras();
   }, []);
 
@@ -73,32 +76,35 @@ const ReciterScreen = ({navigation, route}) => {
       <View style={{flex: 1}}>
         {/* SEARCH BOX */}
         <Search search={search} />
+
         {!loading ? (
           // render suras
-          suras.length ? (
+          suras?.length > 0 ? (
             <FlatList
               // initialNumToRender={suras.length}
               contentContainerStyle={{paddingHorizontal: 15}}
               keyExtractor={item => `${item.id}`}
               data={suras}
               showsVerticalScrollIndicator={false}
-              ListHeaderComponent={() => <View style={{height: 32}} />}
-              renderItem={({item}) => (
-                <Item
-                  title={item.title}
-                  subTitle={item.rewaya}
-                  onPress={() =>
-                    navigation.push('Player', {
-                      suras: suras,
-                      reciterName: item.reciterName,
-                      rewaya: item.rewaya,
-                      suraUrl: item.url,
-                      suraId: item.id,
-                      suraName: item.title,
-                    })
-                  }
-                />
-              )}
+              ListHeaderComponent={<View style={{height: 32}} />}
+              renderItem={({item}) => {
+                return (
+                  <Item
+                    title={item.title}
+                    subTitle={item.rewaya}
+                    onPress={() =>
+                      navigation.push('Player', {
+                        suras: suras,
+                        reciterName: item.reciterName,
+                        rewaya: item.rewaya,
+                        suraUrl: item.url,
+                        suraId: item.id,
+                        suraName: item.title,
+                      })
+                    }
+                  />
+                );
+              }}
             />
           ) : searchTerm ? (
             // if there is no suras with serch term
@@ -107,7 +113,13 @@ const ReciterScreen = ({navigation, route}) => {
                 السورة ' {searchTerm} ' غير متوفرة
               </Text>
             </View>
-          ) : null
+          ) : (
+            <View style={styles.center}>
+              <Text style={styles.noItemsText(colors.gray)}>
+                لا توجد بيانات
+              </Text>
+            </View>
+          )
         ) : (
           // loading indicator
           <View style={styles.center}>

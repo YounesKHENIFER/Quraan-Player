@@ -146,9 +146,6 @@ export default function BottomTabs({navigation, route}) {
 
       <Tab.Screen
         name="Main"
-        component={() => (
-          <StackNavigator connected={connected} setRefresh={setRefresh} />
-        )}
         options={{
           tabBarLabel: 'الإستماع',
           tabBarIcon: ({focused, color, size}) => {
@@ -159,8 +156,9 @@ export default function BottomTabs({navigation, route}) {
             );
           },
         }}
-        listeners={() => listeners(3)}
-      />
+        listeners={() => listeners(3)}>
+        {() => <StackNavigator connected={connected} setRefresh={setRefresh} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }
